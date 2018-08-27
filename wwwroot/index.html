@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Title</title>
+		<script src="jquery-3.3.1.min.js"></script>
+		<script src="socket.io.js"></script>
+		<style>
+			body {
+				background: #e0e0e0;
+			}
+			#content {
+				width: 800px;
+				height: 800px;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div>
+			<textarea id="content"></textarea>
+		</div>
+
+		<div>
+			<button id="testSendMsg">Send a message to the server</button>
+		</div>
+
+		<script>
+			// ----
+
+			function log(text) {
+				c = $("#content")
+				var allText = c.val();
+				allText += text + "\n";
+				c.val(allText);
+				c.scrollTop(c[0].scrollHeight);
+			}
+
+			// ----
+
+			var clientID = 1;
+			$("#testSendMsg").click(function(e) {
+				log("> Sending " + clientID + " to server ...")
+				socket.emit("myws", clientID);
+				clientID += 1;
+				log("> Done.")
+			});
+
+			// ----
+
+			var socket = null;
+
+			$(document).ready(function() {
+				// socket = io("http:///", {transports: ['websocket']});
+				socket = io("http:///");
+
+				// Fired upon a connection including a successful reconnection.
+				socket.on("connect", function(){
+					log("connect");
+				});
+
+				// Fired upon a connection error.
+				socket.on("connect_error", function(error){
+					log("connect_error : " + error);
+				});
+
+				// Fired upon a connection timeout.
+				socket.on("connect_timeout", function(timeout){
+					log("connect_timeout : " + timeout);
+				});
+
+				// Fired when an error occurs.
+				socket.on("error", function(error){
+					log("error : " + error);
+				});
+
+				// Fired upon a successful reconnection.
+				socket.on("reconnect", function(attemptNumber){
+					log("reconnect : " + attemptNumber);
+				});
+
+				// Fired upon an attempt to reconnect.
+				socket.on("reconnect_attempt", function(attemptNumber){
+					log("reconnect_attempt : " + attemptNumber);
+				});
+
+				// Fired upon an attempt to reconnect.
+				socket.on("reconnecting", function(attemptNumber){
+					log("reconnecting : " + attemptNumber);
+				});
+
+				// Fired upon a reconnection attempt error.
+				socket.on("reconnect_error", function(error){
+					log("reconnect_error : " + error);
+				});
+
+				// Fired when couldn't reconnect within reconnectionAttempts.
+				socket.on("reconnect_failed", function(){
+					log("reconnect_failed");
+				});
+
+				// A custom event
+				socket.on("clientstatus", function(data){
+					log("< Client status received: " + JSON.stringify(data));
+				});
+
+				// Fired upon a disconnection.
+				socket.on("disconnect", function(){
+					log("disconnect");
+				});
+
+				$("#content").val("");
+			});
+		</script>
+	</body>
+</html>
+
+
+
