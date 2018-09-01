@@ -2,7 +2,7 @@ This is an attempt to implement asynchroneous communication between a Python ser
 
 Current state of work: Dysfunctional. Things are not yet working properly. Feel free to help if you can.
 
-License: BSD.
+License: MIT.
 
 
 
